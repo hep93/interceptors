@@ -329,6 +329,11 @@ export const createXMLHttpRequestOverride = (
             // Perform an original request, when the request middleware returned no mocked response.
             const originalRequest = new pureXMLHttpRequest()
 
+            if (this.responseType === 'arraybuffer') {
+              originalRequest.responseType = this.responseType
+            }
+
+
             debug('opening an original request %s %s', this.method, this.url)
             originalRequest.open(
               this.method,
