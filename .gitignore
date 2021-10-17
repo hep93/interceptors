@@ -2,6 +2,5 @@
 *.log
 .vscode
 node_modules
-lib
 package-lock.json
 .idea
