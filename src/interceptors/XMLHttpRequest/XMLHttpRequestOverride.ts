@@ -514,11 +514,7 @@ export const createXMLHttpRequestOverride = (
 
         case 'arraybuffer': {
           debug('resolving response body as ArrayBuffer')
-          if ((typeof body) === 'string') {
-            const arrayBuffer = bufferFrom(body) 
-            return arrayBuffer
-          }
-          return body
+	  return (new Response(body)).arrayBuffer()
         }
 
         default:
