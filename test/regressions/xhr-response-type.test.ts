@@ -80,16 +80,17 @@ test('responds with an ArrayBuffer when "responseType" equals "arraybuffer"', as
     req.responseType = 'arraybuffer'
   })
 
-  const expectedArrayBuffer = new Uint8Array(
+  const expectedArrayBuffer = 
     Buffer.from(
       JSON.stringify({
         firstName: 'John',
         lastName: 'Maverick',
       })
     )
-  )
 
-  const responseBuffer: Uint8Array = req.response
+  const responseBuffer: ArrayBuffer = req.response
 
-  expect(Buffer.compare(responseBuffer, expectedArrayBuffer)).toBe(0)
+
+  expect(Buffer.compare(Buffer.from(responseBuffer), expectedArrayBuffer)).toBe(0)
 })
+

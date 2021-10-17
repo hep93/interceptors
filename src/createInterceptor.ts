@@ -26,7 +26,7 @@ export interface IsomorphicResponse {
   status: number
   statusText: string
   headers: Headers
-  body?: string
+  body?: any
 }
 
 export interface MockedResponse

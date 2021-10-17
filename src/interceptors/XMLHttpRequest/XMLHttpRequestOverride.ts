@@ -291,8 +291,14 @@ export const createXMLHttpRequestOverride = (
             this.setReadyState(this.HEADERS_RECEIVED)
 
             debug('response type', this.responseType)
-            this.response = this.getResponseBody(mockedResponse.body)
-            this.responseText = mockedResponse.body || ''
+            if (mockedResponse.body === null || mockedResponse.body === undefined || typeof mockedResponse.body === 'string') {
+              this.responseText = mockedResponse.body || ''
+              this.response = this.getResponseBody(mockedResponse.body)
+            } else {
+              const arrayBuffer = mockedResponse.body
+              this.responseText = (new Uint8Array(arrayBuffer)).toString()
+              this.response = arrayBuffer
+            }
             this.responseXML = this.getResponseXML()
 
             debug('set response body', this.response)
@@ -302,12 +308,12 @@ export const createXMLHttpRequestOverride = (
 
               // Presense of the mocked response implies a response body (not null).
               // Presense of the coerced `this.response` implies the mocked body is valid.
-              const bodyBuffer = bufferFrom(mockedResponse.body)
+              const bodyArray = new Uint8Array(bufferFrom(mockedResponse.body))
 
               // Trigger a progress event based on the mocked response body.
               this.trigger('progress', {
-                loaded: bodyBuffer.length,
-                total: bodyBuffer.length,
+                loaded: bodyArray.length,
+                total: bodyArray.length,
               })
             }
 
@@ -485,15 +491,15 @@ export const createXMLHttpRequestOverride = (
     /**
      * Resolves the response based on the `responseType` value.
      */
-    getResponseBody(body: string | undefined) {
+    getResponseBody(_body: any) {
       // Handle an improperly set "null" value of the mocked response body.
-      const textBody = body ?? ''
-      debug('coerced response body to', textBody)
+      const body = _body ?? ''
+      debug('coerced response body to', body)
 
       switch (this.responseType) {
         case 'json': {
           debug('resolving response body as JSON')
-          return parseJson(textBody)
+          return parseJson(body.toString())
         }
 
         case 'blob': {
@@ -501,19 +507,22 @@ export const createXMLHttpRequestOverride = (
             this.getResponseHeader('content-type') || 'text/plain'
           debug('resolving response body as Blob', { type: blobType })
 
-          return new Blob([textBody], {
+          return new Blob([body], {
             type: blobType,
           })
         }
 
         case 'arraybuffer': {
           debug('resolving response body as ArrayBuffer')
-          const arrayBuffer = bufferFrom(textBody)
-          return arrayBuffer
+          if ((typeof body) === 'string') {
+            const arrayBuffer = bufferFrom(body)
+            return arrayBuffer
+          }
+          return body
         }
 
         default:
-          return textBody
+          return body
       }
     }
 
