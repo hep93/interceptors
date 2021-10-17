@@ -68,7 +68,7 @@ export declare const createXMLHttpRequestOverride: (options: CreateXMLHttpReques
         /**
          * Resolves the response based on the `responseType` value.
          */
-        getResponseBody(body: string | undefined): string | Record<string, any> | null;
+        getResponseBody(_body: any): any;
         getResponseXML(): Document | null;
         /**
          * Propagates mock XMLHttpRequest instance callbacks
