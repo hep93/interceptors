@@ -15,8 +15,7 @@
     "test:integration:browser": "jest --c test/jest.browser.config.js",
     "clean": "rimraf lib",
     "build": "yarn clean && tsc --build",
-    "prepublishOnly": "yarn test && yarn build",
-    "postinstall": "tsc"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "files": [
     "lib",
